@@ -1,4 +1,4 @@
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, BarChart, Bar, Legend } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 
 const spendTrendData = [
   { month: '1月', 燃油: 400, 车辆: 240, 维保: 100, IT: 50 },
@@ -17,122 +17,125 @@ const categoryData = [
   { name: '其他服务', value: 5 },
 ];
 
-const supplierData = [
-  { name: 'S级', 数量: 45, 占比: 15 },
-  { name: 'A级', 数量: 120, 占比: 40 },
-  { name: 'B级', 数量: 90, 占比: 30 },
-  { name: 'C级', 数量: 30, 占比: 10 },
-  { name: 'D级', 数量: 15, 占比: 5 },
-];
+const COLORS = ['#00f0ff', '#3b82f6', '#6366f1', '#8b5cf6', '#ec4899'];
 
-const COLORS = ['#06b6d4', '#3b82f6', '#6366f1', '#8b5cf6', '#ec4899'];
+const CustomTooltip = ({ active, payload, label }: any) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-[#06102b]/90 border border-[#00f0ff]/50 p-3 rounded-md shadow-[0_0_15px_rgba(0,240,255,0.2)] backdrop-blur-sm">
+        <p className="text-[#00f0ff] font-mono mb-2 border-b border-[#1d3b8e] pb-1">{label}</p>
+        {payload.map((entry: any, index: number) => (
+          <div key={index} className="flex items-center gap-2 text-sm my-1">
+            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }} />
+            <span className="text-gray-300">{entry.name}:</span>
+            <span className="text-white font-mono font-bold">{entry.value}</span>
+          </div>
+        ))}
+      </div>
+    );
+  }
+  return null;
+};
 
 export function SpendTrendChart() {
   return (
-    <div className="bg-slate-900/40 border border-cyan-500/30 rounded-xl p-6 h-full flex flex-col">
-      <h2 className="text-lg font-semibold text-cyan-100 mb-4 flex items-center gap-2">
-        <div className="w-2 h-4 bg-cyan-500 rounded-sm shadow-[0_0_8px_rgba(6,182,212,0.8)]" />
-        采购支出趋势分析 (百万)
-      </h2>
-      <div className="flex-1 min-h-[200px]">
-        <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={spendTrendData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-            <defs>
-              <linearGradient id="colorFuel" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#06b6d4" stopOpacity={0.3}/>
-                <stop offset="95%" stopColor="#06b6d4" stopOpacity={0}/>
-              </linearGradient>
-              <linearGradient id="colorVeh" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
-                <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
-              </linearGradient>
-            </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" vertical={false} />
-            <XAxis dataKey="month" stroke="#64748b" fontSize={12} tickLine={false} axisLine={false} />
-            <YAxis stroke="#64748b" fontSize={12} tickLine={false} axisLine={false} />
-            <Tooltip 
-              contentStyle={{ backgroundColor: '#0f172a', borderColor: '#1e293b', color: '#f8fafc' }}
-              itemStyle={{ color: '#e2e8f0' }}
-            />
-            <Legend wrapperStyle={{ fontSize: '12px', color: '#94a3b8' }} />
-            <Area type="monotone" dataKey="燃油" stackId="1" stroke="#06b6d4" fill="url(#colorFuel)" />
-            <Area type="monotone" dataKey="车辆" stackId="1" stroke="#3b82f6" fill="url(#colorVeh)" />
-            <Area type="monotone" dataKey="维保" stackId="1" stroke="#6366f1" fill="#6366f1" fillOpacity={0.2} />
-            <Area type="monotone" dataKey="IT" stackId="1" stroke="#8b5cf6" fill="#8b5cf6" fillOpacity={0.2} />
-          </AreaChart>
-        </ResponsiveContainer>
-      </div>
-    </div>
+    <ResponsiveContainer width="100%" height="100%">
+      <AreaChart data={spendTrendData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+        <defs>
+          <linearGradient id="colorFuel" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="5%" stopColor="#00f0ff" stopOpacity={0.6}/>
+            <stop offset="95%" stopColor="#00f0ff" stopOpacity={0}/>
+          </linearGradient>
+          <linearGradient id="colorVeh" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.6}/>
+            <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+          </linearGradient>
+          <linearGradient id="colorMaint" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="5%" stopColor="#6366f1" stopOpacity={0.6}/>
+            <stop offset="95%" stopColor="#6366f1" stopOpacity={0}/>
+          </linearGradient>
+          <linearGradient id="colorIT" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.6}/>
+            <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0}/>
+          </linearGradient>
+        </defs>
+        <CartesianGrid strokeDasharray="3 3" stroke="#1d3b8e" vertical={false} opacity={0.5} />
+        <XAxis dataKey="month" stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} />
+        <YAxis stroke="#94a3b8" fontSize={12} tickLine={false} axisLine={false} />
+        <Tooltip content={<CustomTooltip />} />
+        <Legend wrapperStyle={{ fontSize: '12px', color: '#94a3b8', paddingTop: '10px' }} iconType="circle" />
+        <Area type="monotone" dataKey="燃油" stackId="1" stroke="#00f0ff" strokeWidth={2} fill="url(#colorFuel)" activeDot={{ r: 6, fill: '#00f0ff', stroke: '#fff', strokeWidth: 2 }} />
+        <Area type="monotone" dataKey="车辆" stackId="1" stroke="#3b82f6" strokeWidth={2} fill="url(#colorVeh)" activeDot={{ r: 6, fill: '#3b82f6', stroke: '#fff', strokeWidth: 2 }} />
+        <Area type="monotone" dataKey="维保" stackId="1" stroke="#6366f1" strokeWidth={2} fill="url(#colorMaint)" activeDot={{ r: 6, fill: '#6366f1', stroke: '#fff', strokeWidth: 2 }} />
+        <Area type="monotone" dataKey="IT" stackId="1" stroke="#8b5cf6" strokeWidth={2} fill="url(#colorIT)" activeDot={{ r: 6, fill: '#8b5cf6', stroke: '#fff', strokeWidth: 2 }} />
+      </AreaChart>
+    </ResponsiveContainer>
   );
 }
+
+const CustomPieTooltip = ({ active, payload }: any) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-[#06102b]/90 border border-[#00f0ff]/50 p-3 rounded-md shadow-[0_0_15px_rgba(0,240,255,0.2)] backdrop-blur-sm">
+        <div className="flex items-center gap-2 text-sm">
+          <div className="w-2 h-2 rounded-full" style={{ backgroundColor: payload[0].payload.fill }} />
+          <span className="text-gray-300">{payload[0].name}:</span>
+          <span className="text-white font-mono font-bold">{payload[0].value}%</span>
+        </div>
+      </div>
+    );
+  }
+  return null;
+};
 
 export function CategoryPieChart() {
   return (
-    <div className="bg-slate-900/40 border border-cyan-500/30 rounded-xl p-6 h-full flex flex-col">
-      <h2 className="text-lg font-semibold text-cyan-100 mb-4 flex items-center gap-2">
-        <div className="w-2 h-4 bg-cyan-500 rounded-sm shadow-[0_0_8px_rgba(6,182,212,0.8)]" />
-        采购品类结构
-      </h2>
-      <div className="flex-1 min-h-[200px]">
-        <ResponsiveContainer width="100%" height="100%">
-          <PieChart>
-            <Pie
-              data={categoryData}
-              cx="50%"
-              cy="50%"
-              innerRadius={60}
-              outerRadius={80}
-              paddingAngle={5}
-              dataKey="value"
-              stroke="none"
-            >
-              {categoryData.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-              ))}
-            </Pie>
-            <Tooltip 
-              contentStyle={{ backgroundColor: '#0f172a', borderColor: '#1e293b', color: '#f8fafc', borderRadius: '8px' }}
-              itemStyle={{ color: '#e2e8f0' }}
-              formatter={(value) => `${value}%`}
+    <ResponsiveContainer width="100%" height="100%">
+      <PieChart>
+        <defs>
+          {categoryData.map((entry, index) => (
+            <filter id={`glow-${index}`} key={index}>
+              <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+              <feMerge>
+                <feMergeNode in="coloredBlur"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+          ))}
+        </defs>
+        <Pie
+          data={categoryData}
+          cx="40%"
+          cy="50%"
+          innerRadius={55}
+          outerRadius={75}
+          paddingAngle={5}
+          dataKey="value"
+          stroke="none"
+          cornerRadius={4}
+        >
+          {categoryData.map((entry, index) => (
+            <Cell 
+              key={`cell-${index}`} 
+              fill={COLORS[index % COLORS.length]} 
+              filter={`url(#glow-${index})`}
+              className="hover:opacity-80 transition-opacity cursor-pointer"
             />
-            <Legend 
-              layout="vertical" 
-              verticalAlign="middle" 
-              align="right"
-              wrapperStyle={{ fontSize: '12px', color: '#cbd5e1' }}
-            />
-          </PieChart>
-        </ResponsiveContainer>
-      </div>
-    </div>
+          ))}
+        </Pie>
+        <Tooltip content={<CustomPieTooltip />} />
+        <Legend 
+          layout="vertical" 
+          verticalAlign="middle" 
+          align="right"
+          wrapperStyle={{ fontSize: '12px', color: '#94a3b8' }}
+          iconType="circle"
+        />
+        {/* Center Text */}
+        <text x="40%" y="45%" textAnchor="middle" fill="#94a3b8" fontSize="12">总计</text>
+        <text x="40%" y="58%" textAnchor="middle" fill="#00f0ff" fontSize="20" fontWeight="bold" className="font-mono">100%</text>
+      </PieChart>
+    </ResponsiveContainer>
   );
 }
 
-export function SupplierBarChart() {
-  return (
-    <div className="bg-slate-900/40 border border-cyan-500/30 rounded-xl p-6 h-full flex flex-col">
-      <h2 className="text-lg font-semibold text-cyan-100 mb-4 flex items-center gap-2">
-        <div className="w-2 h-4 bg-cyan-500 rounded-sm shadow-[0_0_8px_rgba(6,182,212,0.8)]" />
-        供应商绩效评级分布
-      </h2>
-      <div className="flex-1 min-h-[200px]">
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={supplierData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }} layout="vertical">
-            <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" horizontal={true} vertical={false} />
-            <XAxis type="number" stroke="#64748b" fontSize={12} tickLine={false} axisLine={false} />
-            <YAxis dataKey="name" type="category" stroke="#64748b" fontSize={12} tickLine={false} axisLine={false} />
-            <Tooltip 
-              cursor={{ fill: '#1e293b', opacity: 0.4 }}
-              contentStyle={{ backgroundColor: '#0f172a', borderColor: '#1e293b', color: '#f8fafc', borderRadius: '8px' }}
-            />
-            <Bar dataKey="数量" fill="#3b82f6" radius={[0, 4, 4, 0]}>
-              {supplierData.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={entry.name === 'D级' || entry.name === 'C级' ? '#ef4444' : '#3b82f6'} />
-              ))}
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
-    </div>
-  );
-}
